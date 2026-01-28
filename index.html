@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="todo-app">
+            <header class="header">
+                <h1>📝 To-Do List Saya</h1>
+                <p class="subtitle">Kelola tugas-tugas Anda dengan mudah</p>
+            </header>
+
+            <div class="input-section">
+                <input 
+                    type="text" 
+                    id="todoInput" 
+                    class="input-field" 
+                    placeholder="Masukkan tugas baru..."
+                    autocomplete="off"
+                >
+                <button id="addBtn" class="add-btn">Tambah Tugas</button>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="active">Belum Selesai</button>
+                <button class="filter-btn" data-filter="completed">Selesai</button>
+            </div>
+
+            <div class="stats">
+                <span>Total: <span id="totalCount">0</span></span>
+                <span>Selesai: <span id="completedCount">0</span></span>
+            </div>
+
+            <ul id="todoList" class="todo-list"></ul>
+
+            <div class="empty-state" id="emptyState">
+                <p>📭 Tidak ada tugas. Mulai tambahkan tugas baru!</p>
+            </div>
+
+            <div class="action-section">
+                <button id="clearCompleted" class="clear-btn">Hapus Tugas yang Selesai</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
