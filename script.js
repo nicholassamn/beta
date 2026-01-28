@@ -13,6 +13,8 @@ class TodoApp {
 
     cacheElements() {
         this.todoInput = document.getElementById('todoInput');
+        this.categoryInput = document.getElementById('categoryInput');
+        this.deadlineToggle = document.getElementById('deadlineToggle');
         this.deadlineInput = document.getElementById('deadlineInput');
         this.addBtn = document.getElementById('addBtn');
         this.todoList = document.getElementById('todoList');
@@ -21,6 +23,7 @@ class TodoApp {
         this.completedCount = document.getElementById('completedCount');
         this.clearCompleted = document.getElementById('clearCompleted');
         this.filterBtns = document.querySelectorAll('.filter-btn');
+        this.categoryFilter = document.getElementById('categoryFilter');
     }
 
     bindEvents() {
@@ -29,11 +32,20 @@ class TodoApp {
             if (e.key === 'Enter') this.addTodo();
         });
 
+        this.deadlineToggle.addEventListener('change', (e) => {
+            this.deadlineInput.disabled = !e.target.checked;
+            if (!e.target.checked) {
+                this.deadlineInput.value = '';
+            }
+        });
+
         this.clearCompleted.addEventListener('click', () => this.deleteManyCompleted());
 
         this.filterBtns.forEach(btn => {
             btn.addEventListener('click', (e) => this.setFilter(e.target.dataset.filter));
         });
+
+        this.categoryFilter.addEventListener('change', () => this.render());
 
         this.todoList.addEventListener('change', (e) => {
             if (e.target.classList.contains('checkbox')) {
@@ -52,10 +64,16 @@ class TodoApp {
 
     addTodo() {
         const text = this.todoInput.value.trim();
-        const deadline = this.deadlineInput.value;
+        const category = this.categoryInput.value;
+        const deadline = this.deadlineToggle.checked ? this.deadlineInput.value : null;
         
         if (!text) {
             alert('Masukkan tugas terlebih dahulu!');
+            return;
+        }
+
+        if (!category) {
+            alert('Pilih kategori terlebih dahulu!');
             return;
         }
 
@@ -68,7 +86,8 @@ class TodoApp {
             id: Date.now(),
             text: text,
             completed: false,
-            deadline: deadline || null,
+            category: category,
+            deadline: deadline,
             createdAt: new Date().toLocaleDateString('id-ID')
         };
 
@@ -76,7 +95,10 @@ class TodoApp {
         this.save();
         this.render();
         this.todoInput.value = '';
+        this.categoryInput.value = '';
+        this.deadlineToggle.checked = false;
         this.deadlineInput.value = '';
+        this.deadlineInput.disabled = true;
         this.todoInput.focus();
     }
 
@@ -126,12 +148,22 @@ class TodoApp {
     }
 
     getFilteredTodos() {
+        let filtered = this.todos;
+
+        // Filter by status
         if (this.currentFilter === 'active') {
-            return this.todos.filter(t => !t.completed);
+            filtered = filtered.filter(t => !t.completed);
         } else if (this.currentFilter === 'completed') {
-            return this.todos.filter(t => t.completed);
+            filtered = filtered.filter(t => t.completed);
         }
-        return this.todos;
+
+        // Filter by category
+        const selectedCategory = this.categoryFilter.value;
+        if (selectedCategory) {
+            filtered = filtered.filter(t => t.category === selectedCategory);
+        }
+
+        return filtered;
     }
 
     updateStats() {
@@ -165,6 +197,19 @@ class TodoApp {
         }
     }
 
+    getCategoryName(category) {
+        const categories = {
+            'kerja': '💼 Kerja',
+            'pribadi': '👤 Pribadi',
+            'belanja': '🛒 Belanja',
+            'kesehatan': '❤️ Kesehatan',
+            'belajar': '📚 Belajar',
+            'hobi': '🎮 Hobi',
+            'lainnya': '📌 Lainnya'
+        };
+        return categories[category] || category;
+    }
+
     render() {
         const filtered = this.getFilteredTodos();
         this.todoList.innerHTML = '';
@@ -191,6 +236,8 @@ class TodoApp {
                     deadlineHtml = `<div class="deadline-info ${deadlineClass}">${deadlineStatus.message}</div>`;
                 }
 
+                const categoryBadge = `<span class="category-badge category-${todo.category}">${this.getCategoryName(todo.category)}</span>`;
+
                 li.innerHTML = `
                     <div style="flex: 1;">
                         <div style="display: flex; align-items: center; gap: 12px;">
@@ -202,7 +249,10 @@ class TodoApp {
                             >
                             <span class="todo-text" title="${todo.text}">${this.escapeHtml(todo.text)}</span>
                         </div>
-                        ${deadlineHtml}
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
+                            ${categoryBadge}
+                            ${deadlineHtml}
+                        </div>
                     </div>
                     <button class="delete-btn" data-id="${todo.id}">Hapus</button>
                 `;

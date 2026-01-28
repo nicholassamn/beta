@@ -23,12 +23,35 @@
                         placeholder="Masukkan tugas baru..."
                         autocomplete="off"
                     >
+                    <select id="categoryInput" class="input-field category-input">
+                        <option value="">Pilih Kategori</option>
+                        <option value="kerja">💼 Kerja</option>
+                        <option value="pribadi">👤 Pribadi</option>
+                        <option value="belanja">🛒 Belanja</option>
+                        <option value="kesehatan">❤️ Kesehatan</option>
+                        <option value="belajar">📚 Belajar</option>
+                        <option value="hobi">🎮 Hobi</option>
+                        <option value="lainnya">📌 Lainnya</option>
+                    </select>
+                </div>
+                
+                <div class="deadline-toggle">
+                    <label class="toggle-label">
+                        <input 
+                            type="checkbox" 
+                            id="deadlineToggle" 
+                            class="toggle-checkbox"
+                        >
+                        <span>Dengan Deadline</span>
+                    </label>
                     <input 
                         type="date" 
                         id="deadlineInput" 
                         class="input-field deadline-input"
+                        disabled
                     >
                 </div>
+
                 <button id="addBtn" class="add-btn">Tambah Tugas</button>
             </div>
 
@@ -36,6 +59,16 @@
                 <button class="filter-btn active" data-filter="all">Semua</button>
                 <button class="filter-btn" data-filter="active">Belum Selesai</button>
                 <button class="filter-btn" data-filter="completed">Selesai</button>
+                <select id="categoryFilter" class="category-filter">
+                    <option value="">Semua Kategori</option>
+                    <option value="kerja">💼 Kerja</option>
+                    <option value="pribadi">👤 Pribadi</option>
+                    <option value="belanja">🛒 Belanja</option>
+                    <option value="kesehatan">❤️ Kesehatan</option>
+                    <option value="belajar">📚 Belajar</option>
+                    <option value="hobi">🎮 Hobi</option>
+                    <option value="lainnya">📌 Lainnya</option>
+                </select>
             </div>
 
             <div class="stats">
