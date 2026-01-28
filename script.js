@@ -13,6 +13,7 @@ class TodoApp {
 
     cacheElements() {
         this.todoInput = document.getElementById('todoInput');
+        this.deadlineInput = document.getElementById('deadlineInput');
         this.addBtn = document.getElementById('addBtn');
         this.todoList = document.getElementById('todoList');
         this.emptyState = document.getElementById('emptyState');
@@ -51,6 +52,7 @@ class TodoApp {
 
     addTodo() {
         const text = this.todoInput.value.trim();
+        const deadline = this.deadlineInput.value;
         
         if (!text) {
             alert('Masukkan tugas terlebih dahulu!');
@@ -66,6 +68,7 @@ class TodoApp {
             id: Date.now(),
             text: text,
             completed: false,
+            deadline: deadline || null,
             createdAt: new Date().toLocaleDateString('id-ID')
         };
 
@@ -73,6 +76,7 @@ class TodoApp {
         this.save();
         this.render();
         this.todoInput.value = '';
+        this.deadlineInput.value = '';
         this.todoInput.focus();
     }
 
@@ -138,6 +142,29 @@ class TodoApp {
         this.completedCount.textContent = completedTodos;
     }
 
+    getDeadlineStatus(deadline) {
+        if (!deadline) return null;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const deadlineDate = new Date(deadline);
+        deadlineDate.setHours(0, 0, 0, 0);
+        
+        const diffTime = deadlineDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) {
+            return { status: 'urgent', message: '⚠️ Deadline lewat ' + Math.abs(diffDays) + ' hari lalu', days: diffDays };
+        } else if (diffDays === 0) {
+            return { status: 'urgent', message: '🔴 Deadline hari ini!', days: 0 };
+        } else if (diffDays <= 3) {
+            return { status: 'warning', message: '🟠 ' + diffDays + ' hari tersisa', days: diffDays };
+        } else {
+            return { status: 'safe', message: '🟢 ' + diffDays + ' hari tersisa', days: diffDays };
+        }
+    }
+
     render() {
         const filtered = this.getFilteredTodos();
         this.todoList.innerHTML = '';
@@ -153,14 +180,30 @@ class TodoApp {
                     li.classList.add('completed');
                 }
 
+                const deadlineStatus = this.getDeadlineStatus(todo.deadline);
+                if (deadlineStatus && !todo.completed) {
+                    li.classList.add(`deadline-${deadlineStatus.status}`);
+                }
+
+                let deadlineHtml = '';
+                if (todo.deadline) {
+                    const deadlineClass = deadlineStatus ? deadlineStatus.status : '';
+                    deadlineHtml = `<div class="deadline-info ${deadlineClass}">${deadlineStatus.message}</div>`;
+                }
+
                 li.innerHTML = `
-                    <input 
-                        type="checkbox" 
-                        class="checkbox" 
-                        data-id="${todo.id}"
-                        ${todo.completed ? 'checked' : ''}
-                    >
-                    <span class="todo-text" title="${todo.text}">${this.escapeHtml(todo.text)}</span>
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <input 
+                                type="checkbox" 
+                                class="checkbox" 
+                                data-id="${todo.id}"
+                                ${todo.completed ? 'checked' : ''}
+                            >
+                            <span class="todo-text" title="${todo.text}">${this.escapeHtml(todo.text)}</span>
+                        </div>
+                        ${deadlineHtml}
+                    </div>
                     <button class="delete-btn" data-id="${todo.id}">Hapus</button>
                 `;
 

@@ -48,6 +48,14 @@ body {
     gap: 10px;
     padding: 20px;
     border-bottom: 2px solid #f0f0f0;
+    flex-wrap: wrap;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    min-width: 250px;
 }
 
 .input-field {
@@ -57,6 +65,10 @@ body {
     border-radius: 8px;
     font-size: 1em;
     transition: border-color 0.3s;
+}
+
+.deadline-input {
+    min-width: 140px;
 }
 
 .input-field:focus {
@@ -151,6 +163,7 @@ body {
     margin-bottom: 8px;
     transition: all 0.3s;
     animation: slideIn 0.3s ease-out;
+    border-left: 5px solid #e0e0e0;
 }
 
 @keyframes slideIn {
@@ -176,6 +189,43 @@ body {
 .todo-list li.completed .todo-text {
     text-decoration: line-through;
     color: #999;
+}
+
+/* Warna deadline berdasarkan kondisi */
+.todo-list li.deadline-urgent {
+    border-left-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.05);
+}
+
+.todo-list li.deadline-warning {
+    border-left-color: #ffa500;
+    background: rgba(255, 165, 0, 0.05);
+}
+
+.todo-list li.deadline-safe {
+    border-left-color: #51cf66;
+    background: rgba(81, 207, 102, 0.05);
+}
+
+.deadline-info {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 5px;
+}
+
+.deadline-info.urgent {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+.deadline-info.warning {
+    color: #ffa500;
+    font-weight: 600;
+}
+
+.deadline-info.safe {
+    color: #51cf66;
+    font-weight: 600;
 }
 
 .checkbox {
