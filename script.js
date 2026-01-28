@@ -14,6 +14,7 @@ class TodoApp {
     cacheElements() {
         this.todoInput = document.getElementById('todoInput');
         this.categoryInput = document.getElementById('categoryInput');
+        this.descriptionInput = document.getElementById('descriptionInput');
         this.deadlineToggle = document.getElementById('deadlineToggle');
         this.deadlineInput = document.getElementById('deadlineInput');
         this.addBtn = document.getElementById('addBtn');
@@ -65,6 +66,7 @@ class TodoApp {
     addTodo() {
         const text = this.todoInput.value.trim();
         const category = this.categoryInput.value;
+        const description = this.descriptionInput.value.trim();
         const deadline = this.deadlineToggle.checked ? this.deadlineInput.value : null;
         
         if (!text) {
@@ -82,9 +84,15 @@ class TodoApp {
             return;
         }
 
+        if (description.length > 500) {
+            alert('Deskripsi terlalu panjang! Maksimal 500 karakter.');
+            return;
+        }
+
         const todo = {
             id: Date.now(),
             text: text,
+            description: description || '',
             completed: false,
             category: category,
             deadline: deadline,
@@ -96,6 +104,7 @@ class TodoApp {
         this.render();
         this.todoInput.value = '';
         this.categoryInput.value = '';
+        this.descriptionInput.value = '';
         this.deadlineToggle.checked = false;
         this.deadlineInput.value = '';
         this.deadlineInput.disabled = true;
@@ -236,6 +245,11 @@ class TodoApp {
                     deadlineHtml = `<div class="deadline-info ${deadlineClass}">${deadlineStatus.message}</div>`;
                 }
 
+                let descriptionHtml = '';
+                if (todo.description) {
+                    descriptionHtml = `<div class="description-display">${this.escapeHtml(todo.description)}</div>`;
+                }
+
                 const categoryBadge = `<span class="category-badge category-${todo.category}">${this.getCategoryName(todo.category)}</span>`;
 
                 li.innerHTML = `
@@ -253,6 +267,7 @@ class TodoApp {
                             ${categoryBadge}
                             ${deadlineHtml}
                         </div>
+                        ${descriptionHtml}
                     </div>
                     <button class="delete-btn" data-id="${todo.id}">Hapus</button>
                 `;
